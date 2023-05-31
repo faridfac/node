@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 const delay = require('delay');
 const readlineSync = require("readline-sync");
+// muhammad, dinda, imran, fallen, kenzi
 
 const generateUser = () => new Promise((resolve, reject) => {
     fetch('https://randomuser.me/api/?nat=us', {
@@ -93,30 +94,39 @@ const submitTask = (id, reff) => new Promise((resolve, reject) => {
 });
 
 (async () => {
-    const reff = readlineSync.question("[?] Masukan Kode reff : ");
+    const reff = readlineSync.question("[?] Masukan kode reff : ");
+    const numb = readlineSync.question("[?] Mau berapa reff : ");
+    console.log('')
+    let a = 1;
     while (true) {
         try {
             const getUser = await generateUser()
             const address = `0x${getUser.results[0].login.sha1}`
             const splits = getUser.results[0].email.split("@")
             const email = `${splits[0]}@gmail.com`
-            console.log(`[+] Using data ${email}|${address}`)
+            console.log(`[${a}] Using data ${email}|${address}`)
             const submit = await submitForm(email, address, crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID(), reff)
             if(submit.waitlisted === true){
-                console.log('[+] Successfully registration')
+                console.log(`[${a}] Successfully registration`)
                 const datas = ["164449", "164450", "164451", "164452", "164453", "164454"];
                 for (let i = 0; i < datas.length; i++) {
                     const task = await submitTask(datas[i], submit.social_id)
-                    console.log(`[+] Complete task ${datas[i]} > ${task.message}`)
+                    console.log(`[${a}] Complete with ${datas[i]} > ${task.message}`)
                 }
                 console.log('')
                 await delay(5000)
+                a ++;
             } else {
-                console.log('Failed')
+                console.log(`[${a}] Failure registration`)
 
             }
+
+            if(a > numb){
+                console.log(`[+] Done registration ${numb} accounts`)
+                process.exit(0)
+            }
         } catch (e) {
-            console.log('Sleep for 60 seconds')
+            console.log(`[${a}] Sleep for 60 seconds`)
             await delay(60000)
         }
     }
